@@ -1,6 +1,7 @@
 const { generateSign } = require('../../config/jwt');
 const User = require('../models/user');
 const bcrypt = require('bcrypt');
+const { deleteFile } = require('../../utils/deleteFile');
 
 const register = async (req, res, next) => {
   try {
@@ -49,6 +50,9 @@ const deleteUser = async (req, res, next) => {
   try {
     const { id } = req.params;
     const userDeleted = await User.findByIdAndDelete(id);
+
+    deleteFile(userDeleted.img);
+
     return res.status(200).json({
       message: 'User Already Deleted',
       userDeleted,
@@ -67,4 +71,23 @@ const getUsers = async (req, res, next) => {
   }
 };
 
-module.exports = { register, login, deleteUser, getUsers };
+const getAndModifyUsers = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const newUsers = new User(req.body);
+    newUsers._id = id;
+
+    if (req.file) {
+      newUsers.img = req.file.path;
+    }
+
+    const userUpdated = await User.findByIdAndUpdate(id, newUsers, {
+      new: true,
+    });
+    return res.status(200).json(userUpdated);
+  } catch (error) {
+    return res.status(400).json('Ha fallado la petición');
+  }
+};
+
+module.exports = { register, login, deleteUser, getUsers, getAndModifyUsers };
