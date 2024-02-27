@@ -2,14 +2,32 @@ const multer = require('multer');
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
-const storagePaquito = new CloudinaryStorage({
+const storageBands = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
-    folder: 'labelsAndMore',
+    folder: 'storageBands ',
     allow: ['jpg', 'jpeg', 'gif', 'png', 'webp'],
   },
 });
 
-const upload = multer({ storage: storagePaquito });
+const storageLabels = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'storageLabels',
+    allow: ['jpg', 'jpeg', 'gif', 'png', 'webp'],
+  },
+});
 
-module.exports = upload;
+const storageUsers = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'storageUsers',
+    allow: ['jpg', 'jpeg', 'gif', 'png', 'webp'],
+  },
+});
+
+const uploadBandsIMG = multer({ storage: storageBands });
+const uploadLabelsIMG = multer({ storage: storageLabels });
+const uploadUsersIMG = multer({ storage: storageUsers });
+
+module.exports = { uploadBandsIMG, uploadLabelsIMG, uploadUsersIMG };

@@ -1,4 +1,5 @@
-const { isAuth, isAdmin } = require('../../middlewares/auth');
+const { isAdmin } = require('../../middlewares/auth');
+const { uploadBandsIMG } = require('../../middlewares/file');
 const {
   postBands,
   getBands,
@@ -6,13 +7,16 @@ const {
   deleteBand,
 } = require('../controllers/band');
 
-const upload = require('../../middlewares/file');
-
 const bandsRoutes = require('express').Router();
 
-bandsRoutes.post('/', postBands);
+bandsRoutes.post('/', [isAdmin], postBands);
 bandsRoutes.get('/', getBands);
-bandsRoutes.put('/:id', upload.single('img'), getAndModifyBands);
+bandsRoutes.put(
+  '/:id',
+  [isAdmin],
+  uploadBandsIMG.single('img'),
+  getAndModifyBands
+);
 bandsRoutes.delete('/:id', [isAdmin], deleteBand);
 
 module.exports = bandsRoutes;

@@ -1,4 +1,5 @@
-const { isAuth, isAdmin } = require('../../middlewares/auth');
+const { isAdmin } = require('../../middlewares/auth');
+const { uploadLabelsIMG } = require('../../middlewares/file');
 const {
   getLabel,
   postLabel,
@@ -6,12 +7,15 @@ const {
   deleteLabel,
 } = require('../controllers/label');
 
-const upload = require('../../middlewares/file');
-
 const labelRoutes = require('express').Router();
 
-labelRoutes.post('/', postLabel);
-labelRoutes.put('/:id', upload.single('img'), [isAuth], getAndModifyLabel);
+labelRoutes.post('/', [isAdmin], postLabel);
+labelRoutes.put(
+  '/:id',
+  [isAdmin],
+  uploadLabelsIMG.single('img'),
+  getAndModifyLabel
+);
 labelRoutes.get('/', getLabel);
 labelRoutes.delete('/:id', [isAdmin], deleteLabel);
 
